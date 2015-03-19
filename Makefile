@@ -7,6 +7,7 @@ else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
     	LDFLAGS+= -lglfw3 -lGL -lGLEW
+    	LDFLAGS+= -lX11 -lXxf86vm -lXrandr -lpthread -lXi
     endif
     ifeq ($(UNAME_S),Darwin)
         LDFLAGS+=-lglfw3 -framework OpenGL -framework Cocoa -framework IOkit -lGLEW
