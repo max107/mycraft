@@ -20,7 +20,7 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -66,6 +66,7 @@ private:
 	float m_startTime;
 };
 
+GLFWwindow* window;
 ChunkManager* chunkManager;
 Renderer* renderer;
 Player* player;
@@ -73,14 +74,14 @@ BlockLibrary::Tag selectedBlock = 0;
 
 // A movement of 1 pixel corresponds to a rotation of how many degrees?
 float rotationSpeed = 160.0 / INITIAL_WIDTH;
-void GLFWCALL windowResizedCallback(int width, int height)
+void windowResizedCallback(GLFWwindow* window, int width, int height)
 {
 	rotationSpeed = 160.0 / width;
 	if (renderer)
 		renderer->setSize(width, height);
 }
 
-void GLFWCALL keyCallback(int key, int action)
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	// Show some debug info
 	if (key == 'I' && action == GLFW_PRESS)
@@ -102,7 +103,7 @@ void GLFWCALL keyCallback(int key, int action)
 }
 
 bool mouseCaptured = false;
-void GLFWCALL mouseButtonCallback(int button, int action)
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS)
 	{
@@ -113,7 +114,7 @@ void GLFWCALL mouseButtonCallback(int button, int action)
 			if (hit)
 			{
 				if (button == GLFW_MOUSE_BUTTON_RIGHT ||
-					(button == GLFW_MOUSE_BUTTON_LEFT && glfwGetKey(GLFW_KEY_LSUPER) == GLFW_PRESS))
+					(button == GLFW_MOUSE_BUTTON_LEFT && glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS))
 				{
 					// Check that the player will not intersect the new block
 					std::vector<Coordinate> locations = player->potentialIntersections();
@@ -129,8 +130,8 @@ void GLFWCALL mouseButtonCallback(int button, int action)
 		else
 		{
 			mouseCaptured = true;
-			glfwDisable(GLFW_MOUSE_CURSOR);
-			glfwSetMousePos(renderer->width() / 2, renderer->height() / 2);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			glfwSetCursorPos(window, renderer->width() / 2, renderer->height() / 2);
 		}
 	}
 }
@@ -145,18 +146,20 @@ int main()
 	}
 
 	// Use glfw to open a window
-	glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 4);
-	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-	glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 2);
-	glfwOpenWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	if(!glfwOpenWindow(INITIAL_WIDTH, INITIAL_HEIGHT, 0, 0, 0, 0, 32, 0, GLFW_WINDOW))
+	GLFWwindow* window = glfwCreateWindow(INITIAL_WIDTH, INITIAL_HEIGHT, "MyCraft", NULL, NULL);
+	glfwMakeContextCurrent(window);
+	if (!window)
 	{
 		std::cerr << "Failed to open glfw window." << std::endl;
-		glfwTerminate();
-		return 1;
+	    glfwTerminate();
+	    exit(EXIT_FAILURE);
 	}
 
 	// Initialize the OpenGL Extension Wrangler Library
@@ -167,14 +170,13 @@ int main()
 		return 1;
 	}
 
-	glfwSetWindowTitle("MyCraft");
-	glfwSetWindowSizeCallback(windowResizedCallback);
-	glfwSetKeyCallback(keyCallback);
-	glfwSetMouseButtonCallback(mouseButtonCallback);
+	glfwSetWindowSizeCallback(window, windowResizedCallback);
+	glfwSetKeyCallback(window, keyCallback);
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
 	// Ensure we can capture the escape key being pressed below
-	glfwEnable(GLFW_STICKY_KEYS);
-	glfwEnable(GLFW_STICKY_MOUSE_BUTTONS);
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE);
 
 	srand(time(0));
 	chunkManager = new ChunkManager(rand());
@@ -185,8 +187,12 @@ int main()
 
 	float lastUpdate = glfwGetTime();
 	FpsCounter fpsCounter;
-	while (glfwGetWindowParam(GLFW_OPENED))
+	// while (glfwGetWindowAttrib(window, GLFW_VISIBLE))
+	while (!glfwWindowShouldClose(window))
 	{
+		// Check and call events
+    	glfwPollEvents();
+
 		// Determine the time since the last update so we can determine how far
 		// the player will travel this frame
 		float now = glfwGetTime();
@@ -194,17 +200,21 @@ int main()
 		lastUpdate = now;
 
 		glm::vec3 step;
-		if (glfwGetKey('W') == GLFW_PRESS)
+		if (glfwGetKey(window, 'W') == GLFW_PRESS) {
 			player->step(Player::FORWARD);
+		}
 
-		if (glfwGetKey('S') == GLFW_PRESS)
+		if (glfwGetKey(window, 'S') == GLFW_PRESS) {
 			player->step(Player::BACKWARD);
+		}
 
-		if (glfwGetKey('A') == GLFW_PRESS)
+		if (glfwGetKey(window, 'A') == GLFW_PRESS) {
 			player->step(Player::LEFT);
+		}
 
-		if (glfwGetKey('D') == GLFW_PRESS)
+		if (glfwGetKey(window, 'D') == GLFW_PRESS) {
 			player->step(Player::RIGHT);
+		}
 
 		/*
 		if (glfwGetKey(GLFW_KEY_SPACE) == GLFW_PRESS)
@@ -216,26 +226,27 @@ int main()
 
 		player->update(elapsed);
 
-		if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
 			mouseCaptured = false;
-			glfwEnable(GLFW_MOUSE_CURSOR);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
 
 		if (mouseCaptured)
 		{
 			glm::ivec2 currentMouse;
-			glfwGetMousePos(&currentMouse.x, &currentMouse.y);
+			glfwGetCursorPos(window, (double *)&currentMouse.x, (double *)&currentMouse.y);
 
 			player->turnRight(rotationSpeed * (currentMouse.x - (renderer->width() / 2)));
 			player->tiltUp(rotationSpeed * (currentMouse.y - (renderer->height() / 2)));
-			glfwSetMousePos(renderer->width() / 2, renderer->height() / 2);
+			glfwSetCursorPos(window, renderer->width() / 2, renderer->height() / 2);
 		}
 
 		std::vector<const Mesh*> visibleMeshes = chunkManager->getVisibleMeshes(player->camera());
 		renderer->render(player->camera(), visibleMeshes, player->isUnderwater(), selectedBlock);
 
-		glfwSwapBuffers();
+		// Swap the buffers
+	    glfwSwapBuffers(window);
 
 		fpsCounter.frame();
 	}

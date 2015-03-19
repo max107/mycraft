@@ -9,7 +9,7 @@
 #include <array>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -81,8 +81,8 @@ Renderer::Renderer(int width, int height)
 	{
 		for (size_t j = 0; j < 6; ++j)
 		{
-			CubeVertex vertex = cubeMesh[face * 6 + j];		
-	
+			CubeVertex vertex = cubeMesh[face * 6 + j];
+
 			glm::vec3 position = vertex.position;
 
 			// Center at the origin

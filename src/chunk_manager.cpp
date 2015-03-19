@@ -102,7 +102,7 @@ class DistanceToCamera
 public:
 	DistanceToCamera(const Camera& camera)
 	{
-		m_camera = camera.eye.xz;
+		m_camera = camera.eye.xz();
 	}
 
 	static glm::vec2 chunkCenter(const std::pair<int, int>& location)
@@ -195,7 +195,7 @@ std::vector<const Mesh*> ChunkManager::getVisibleMeshes(const Camera& camera)
 	//std::cout << "In queue: " << m_chunkQueue.size() << std::endl;
 
 	// Free/unload chunks and meshes that are far away from the camera
-	glm::vec2 camera2d = camera.eye.xz;
+	glm::vec2 camera2d = camera.eye.xz();
 
 	// We have to do this loop manually because elements are being deleted inside the loop
 	auto j = m_chunks.begin();

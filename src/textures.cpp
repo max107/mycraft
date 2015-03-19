@@ -101,12 +101,14 @@ glm::vec4 split(uint32_t color)
     uint8_t g = (color & 0xFF00) >> 8;
     uint8_t r = (color & 0xFF);
 
-    return glm::vec4(r, g, b, a) / 255.0;
+    // TODO return glm::vec4(r, g, b, a) / 255.0;
+    return glm::vec4(r, g, b, a);
 }
 
 uint32_t unsplit(const glm::vec4& color)
 {
-    glm::ivec4 scaled(255.0 * color);
+    // TODO glm::ivec4 scaled(255.0 * color);
+    glm::ivec4 scaled(color);
     return (scaled.a << 24) + (scaled.b << 16) + (scaled.g << 8) + scaled.r;
 }
 
@@ -118,7 +120,7 @@ glm::vec4 blend(glm::vec4 source, glm::vec4 dest)
     if (result.a == 0.0f)
         return glm::vec4(0.0f);
 
-    result.rgb = (source.a * source.rgb + dest.a * dest.rgb * (1 - source.a)) / result.a;
+    result.rgb() = (source.a * source.rgb() + dest.a * dest.rgb() * (1 - source.a)) / result.a;
     return result;
 }
 
