@@ -1,5 +1,6 @@
 #define GLM_SWIZZLE
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "exceptions.hpp"
 #include "textures.hpp"
@@ -101,14 +102,12 @@ glm::vec4 split(uint32_t color)
     uint8_t g = (color & 0xFF00) >> 8;
     uint8_t r = (color & 0xFF);
 
-    // TODO return glm::vec4(r, g, b, a) / 255.0;
-    return glm::vec4(r, g, b, a);
+    return glm::vec4(r, g, b, a) / 255.0f;
 }
 
 uint32_t unsplit(const glm::vec4& color)
 {
-    // TODO glm::ivec4 scaled(255.0 * color);
-    glm::ivec4 scaled(color);
+    glm::ivec4 scaled(255.0f * color);
     return (scaled.a << 24) + (scaled.b << 16) + (scaled.g << 8) + scaled.r;
 }
 
@@ -117,8 +116,9 @@ glm::vec4 blend(glm::vec4 source, glm::vec4 dest)
     glm::vec4 result;
 
     result.a = source.a + dest.a * (1 - source.a);
-    if (result.a == 0.0f)
+    if (result.a == 0.0f) {
         return glm::vec4(0.0f);
+    }
 
     result.rgb() = (source.a * source.rgb() + dest.a * dest.rgb() * (1 - source.a)) / result.a;
     return result;

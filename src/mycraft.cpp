@@ -142,6 +142,19 @@ void error_callback(int error, const char* description)
 	std::cerr << description << std::endl;
 }
 
+void glfw_initialize()
+{
+	// Use glfw to open a window
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	#ifdef __APPLE__
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#elif __linux
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	#endif
+}
 
 int main()
 {
@@ -153,12 +166,7 @@ int main()
 
 	glfwSetErrorCallback(error_callback);
 
-	// Use glfw to open a window
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	// glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfw_initialize();
 
 	// Open a window and create its OpenGL context
 	GLFWwindow* window = glfwCreateWindow(INITIAL_WIDTH, INITIAL_HEIGHT, "MyCraft", NULL, NULL);
