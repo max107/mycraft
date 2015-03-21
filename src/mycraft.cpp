@@ -109,11 +109,11 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 			if (hit) {
 				if (
 				    button == GLFW_MOUSE_BUTTON_RIGHT ||
-			        (
-						button == GLFW_MOUSE_BUTTON_LEFT &&
-						glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS
-					)
-		        ) {
+				    (
+				        button == GLFW_MOUSE_BUTTON_LEFT &&
+				        glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS
+				    )
+				) {
 					// Check that the player will not intersect the new block
 					std::vector<Coordinate> locations = player->potentialIntersections();
 					if (std::find(locations.begin(), locations.end(), lastOpen) == locations.end()) {
@@ -140,7 +140,11 @@ static void mouseLookCallback(GLFWwindow* window, double x, double y)
 	GLfloat xoffset = x - centerX;
 	GLfloat yoffset = y - centerY;
 
+#ifdef __APPLE__
 	GLfloat sensitivity = 400.0f;
+#elif __linux
+	GLfloat sensitivity = 100.0f;
+#endif
 	xoffset /= sensitivity;
 	yoffset /= sensitivity;
 
@@ -148,9 +152,13 @@ static void mouseLookCallback(GLFWwindow* window, double x, double y)
 		// glm::ivec2 currentMouse;
 		// glfwGetCursorPos(window, (double *)&currentMouse.x, (double *)&currentMouse.y);
 
-		// TODO
+#ifdef __APPLE__
 		player->turnRight(rotationSpeed * xoffset);
 		player->tiltUp(rotationSpeed * yoffset);
+#elif __linux
+		player->turnRight(xoffset);
+		player->tiltUp(yoffset);
+#endif
 		glfwSetCursorPos(window, renderer->width() / 2, renderer->height() / 2);
 	}
 }
@@ -165,13 +173,13 @@ void glfw_initialize()
 	// Use glfw to open a window
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	#ifdef __APPLE__
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	#elif __linux
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-	#endif
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#elif __linux
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+#endif
 }
 
 int main()
