@@ -118,7 +118,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 			}
 		} else {
 			mouseCaptured = true;
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			glfwSetCursorPos(window, renderer->width() / 2, renderer->height() / 2);
 		}
 	}
