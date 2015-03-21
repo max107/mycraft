@@ -180,6 +180,8 @@ void glfw_initialize()
 #elif __linux
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 #endif
+	// limit fps by hardware maximum framerate
+	glfwSwapInterval(1);
 }
 
 int main()
