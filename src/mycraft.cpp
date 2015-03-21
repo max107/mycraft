@@ -78,8 +78,9 @@ float rotationSpeed = 160.0 / INITIAL_WIDTH;
 void windowResizedCallback(GLFWwindow* window, int width, int height)
 {
 	rotationSpeed = 160.0 / width;
-	if (renderer)
+	if (renderer) {
 		renderer->setSize(width, height);
+	}
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -126,13 +127,24 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 static void mouseLookCallback(GLFWwindow* window, double x, double y)
 {
+	GLfloat centerX, centerY;
+	centerX = renderer->width() / 2;
+	centerY = renderer->height() / 2;
+
+	GLfloat xoffset = x - centerX;
+	GLfloat yoffset = y - centerY;
+
+	GLfloat sensitivity = 400.0f;
+	xoffset /= sensitivity;
+	yoffset /= sensitivity;
+
 	if (mouseCaptured) {
 		// glm::ivec2 currentMouse;
 		// glfwGetCursorPos(window, (double *)&currentMouse.x, (double *)&currentMouse.y);
 
 		// TODO
-		player->turnRight(rotationSpeed * (x - (renderer->width() / 2)));
-		player->tiltUp(rotationSpeed * (y - (renderer->height() / 2)));
+		player->turnRight(rotationSpeed * xoffset);
+		player->tiltUp(rotationSpeed * yoffset);
 		glfwSetCursorPos(window, renderer->width() / 2, renderer->height() / 2);
 	}
 }
