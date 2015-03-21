@@ -107,12 +107,18 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 			Coordinate targeted, lastOpen;
 			bool hit = castRay(player->camera(), *chunkManager, targeted, lastOpen);
 			if (hit) {
-				if (button == GLFW_MOUSE_BUTTON_RIGHT ||
-				        (button == GLFW_MOUSE_BUTTON_LEFT && glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS)) {
+				if (
+				    button == GLFW_MOUSE_BUTTON_RIGHT ||
+			        (
+						button == GLFW_MOUSE_BUTTON_LEFT &&
+						glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS
+					)
+		        ) {
 					// Check that the player will not intersect the new block
 					std::vector<Coordinate> locations = player->potentialIntersections();
-					if (std::find(locations.begin(), locations.end(), lastOpen) == locations.end())
+					if (std::find(locations.begin(), locations.end(), lastOpen) == locations.end()) {
 						chunkManager->createBlock(lastOpen, selectedBlock);
+					}
 				} else if (button == GLFW_MOUSE_BUTTON_LEFT) {
 					chunkManager->removeBlock(targeted);
 				}

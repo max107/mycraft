@@ -3,7 +3,7 @@
 #include "ray_caster.hpp"
 
 // Maximum distance at which one can target (and destroy / place) a block
-const float MAX_TARGET_DISTANCE = 10.0f;
+const float MAX_TARGET_DISTANCE = 6.0f;
 
 // TODO: Should this go in chunkManager?
 bool castRay(const Camera& camera, const ChunkManager& chunkManager, Coordinate& currentBlock, Coordinate& lastBlock)
