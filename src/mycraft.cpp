@@ -7,7 +7,9 @@
 #include "player.hpp"
 #include "ray_caster.hpp"
 #include "renderer.hpp"
+#include "shader.hpp"
 #include "shaders.hpp"
+#include "textures.hpp"
 
 #include <algorithm>
 #include <array>
@@ -152,9 +154,6 @@ static void mouseLookCallback(GLFWwindow* window, double x, double y)
 		// glm::ivec2 currentMouse;
 		// glfwGetCursorPos(window, (double *)&currentMouse.x, (double *)&currentMouse.y);
 
-		std::cout << xoffset << std::endl;
-		std::cout << yoffset << std::endl;
-
 #ifdef __APPLE__
 		player->turnRight(rotationSpeed * xoffset);
 		player->tiltUp(rotationSpeed * yoffset);
@@ -174,6 +173,7 @@ void error_callback(int error, const char* description)
 void glfw_initialize()
 {
 	// Use glfw to open a window
+	// TODO glEnable(GL_MULTISAMPLE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 #ifdef __APPLE__
@@ -185,6 +185,39 @@ void glfw_initialize()
 #endif
 	// limit fps by hardware maximum framerate
 	glfwSwapInterval(1);
+}
+
+// Loads a cubemap texture from 6 individual texture faces
+// Order should be:
+// +X (right)
+// -X (left)
+// +Y (top)
+// -Y (bottom)
+// +Z (front)? (CHECK THIS)
+// -Z (back)?
+GLuint loadCubemap(std::vector<const GLchar*> faces)
+{
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glActiveTexture(GL_TEXTURE0);
+
+    int width,height;
+    unsigned char* image;
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    for(GLuint i = 0; i < faces.size(); i++)
+    {
+    	PngFile image(faces[i]);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, &image);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    return textureID;
 }
 
 int main()
