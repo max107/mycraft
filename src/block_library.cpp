@@ -66,7 +66,7 @@ void BlockLibrary::buildGrassTextures(uint32_t* result)
 
 	topTexture.tint(grassGreen);
 	overlayTexture.tint(grassGreen);
-	sideTexture.overlayWith(overlayTexture);
+	// sideTexture.overlayWith(overlayTexture);
 
 	// Copy into the final locations
 	sideTexture.copyTo(&result[0 * texturePixels()]);
