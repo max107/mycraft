@@ -152,6 +152,9 @@ static void mouseLookCallback(GLFWwindow* window, double x, double y)
 		// glm::ivec2 currentMouse;
 		// glfwGetCursorPos(window, (double *)&currentMouse.x, (double *)&currentMouse.y);
 
+		std::cout << xoffset << std::endl;
+		std::cout << yoffset << std::endl;
+
 #ifdef __APPLE__
 		player->turnRight(rotationSpeed * xoffset);
 		player->tiltUp(rotationSpeed * yoffset);
