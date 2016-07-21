@@ -7,7 +7,7 @@
 
 BlockLibrary::BlockLibrary()
 {
-	PngFile png("png/textures/blocks/" + std::string("dirt.png"));
+	PngFile png("../png/textures/blocks/" + std::string("dirt.png"));
 	m_resolution = png.width();
 	assert(png.width() == png.height());
 
@@ -24,7 +24,7 @@ BlockLibrary::BlockLibrary()
 	size_t offset = 6 * 2;
 	for (std::string& fileName : textureFiles)
 	{
-		std::string fullName = "png/textures/blocks/" + fileName;
+		std::string fullName = "../png/textures/blocks/" + fileName;
 
 		PngFile texture(fullName);
 		assert(m_resolution == texture.width() && m_resolution == texture.height());
@@ -47,7 +47,7 @@ BlockLibrary::BlockLibrary()
 
 void BlockLibrary::buildGrassTextures(uint32_t* result)
 {
-	std::string prefix = "png/textures/blocks/";
+	std::string prefix = "../png/textures/blocks/";
 
 	PngFile topTexture(prefix + "grass_top.png");
 	assert(topTexture.width() == m_resolution && topTexture.height() == m_resolution);
@@ -79,7 +79,7 @@ void BlockLibrary::buildGrassTextures(uint32_t* result)
 
 void BlockLibrary::buildWaterTextures(uint32_t* result)
 {
-	std::string prefix = "png/textures/blocks/";
+	std::string prefix = "../png/textures/blocks/";
 
 	PngFile texture(prefix + "water.png");
 	assert(texture.width() == m_resolution && texture.height() >= m_resolution);

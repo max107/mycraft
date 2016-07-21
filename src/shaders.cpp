@@ -6,7 +6,7 @@
 
 static void readFile(const std::string& fileName, std::string& buffer)
 {
-	std::ifstream f("shaders/" + fileName);
+	std::ifstream f("../shaders/" + fileName);
 	std::stringstream ss;
 	ss << f.rdbuf();
 

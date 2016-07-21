@@ -6,11 +6,10 @@ ifeq ($(OS),Windows_NT)
 else
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-    	LDFLAGS+= -lglfw3 -lGL -lGLEW
-    	LDFLAGS+= -lX11 -lXxf86vm -lXrandr -lpthread -lXi
+    	LDFLAGS+= -lglfw -lGL -lGLEW -lX11 -lXxf86vm -lXrandr -lpthread -lXi
     endif
     ifeq ($(UNAME_S),Darwin)
-        LDFLAGS+=-lglfw3 -framework OpenGL -framework Cocoa -lGLEW
+        LDFLAGS+= -lglfw3 -framework OpenGL -framework Cocoa -lGLEW
     endif
 endif
 SOURCES=$(wildcard src/*.cpp)
