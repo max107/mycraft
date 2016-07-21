@@ -10,7 +10,7 @@ else
     	LDFLAGS+= -lX11 -lXxf86vm -lXrandr -lpthread -lXi
     endif
     ifeq ($(UNAME_S),Darwin)
-        LDFLAGS+=-lglfw3 -framework OpenGL -framework Cocoa -framework IOkit -lGLEW
+        LDFLAGS+=-lglfw3 -framework OpenGL -framework Cocoa -lGLEW
     endif
 endif
 SOURCES=$(wildcard src/*.cpp)
